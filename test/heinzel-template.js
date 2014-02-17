@@ -85,4 +85,7 @@ describe('Template', function() {
             heinzelTemplate.process(template, data);
         });
     });
+
+    describe.skip('process template file', function() {
+    });
 });
