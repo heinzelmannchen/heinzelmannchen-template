@@ -6,10 +6,13 @@ var Q = require('q'),
     },
     me = module.exports;
 
+_.str = require('underscore.string');
+_.mixin(_.str.exports());
+_.str.include('Underscore.string', 'string'); // => true
 
-me.readFile = function (fileName) {
+me.readFile = function(fileName) {
     var q = Q.defer();
-    fs.readFile(fileName, READ_OPTIONS, function (error, data) {
+    fs.readFile(fileName, READ_OPTIONS, function(error, data) {
         if (error) {
             q.reject(error);
         } else {
@@ -20,25 +23,25 @@ me.readFile = function (fileName) {
     return q.promise;
 };
 
-me.processFile = function (templateFileName, data) {
+me.processFile = function(templateFileName, data) {
     var q = Q.defer();
 
     me.readFile(templateFileName, READ_OPTIONS)
-        .then(function  onReadFile(content) {
+        .then(function onReadFile(content) {
             me.process(content, data)
-                .then(function  onProcessed(result) {
+                .then(function onProcessed(result) {
                     q.resolve(result);
-                }).fail(function  onReadFileError(error) {
+                }).fail(function onReadFileError(error) {
                     q.reject(error);
                 });
-        }).fail(function  onReadFileError(error) {
+        }).fail(function onReadFileError(error) {
             q.reject(error);
         });
 
     return q.promise;
 };
 
-me.process = function (template, data) {
+me.process = function(template, data) {
     var q = Q.defer(),
         result;
 

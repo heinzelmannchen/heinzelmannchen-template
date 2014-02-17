@@ -75,6 +75,19 @@ describe('Template', function() {
                     done();
                 });
         });
+
+        it('should be possible to use _.str in the templates', function(done) {
+            var template = '<%= _.str.camelize(heinzel) %>',
+                data = {
+                    heinzel: 'berti-heinzel'
+                };
+
+            heinzelTemplate.process(template, data)
+                .then(function(result) {
+                    result.should.equal('bertiHeinzel');
+                    done();
+                });
+        });
     });
 
     describe('process template file', function() {
