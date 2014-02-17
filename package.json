@@ -1,23 +1,28 @@
 {
-  "name": "heinzelmannchen",
+  "name": "heinzelmannchen-template",
   "version": "0.0.0",
   "description": "template engine",
-  "main": "heinzel.js",
+  "main": "heinzel-template.js",
   "scripts": {
     "test": "mocha"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/heinzelmannchen/heinzelmannchen.git"
+    "url": "https://github.com/heinzelmannchen/heinzelmannchen-template.git"
   },
   "author": "Christoph Hermann & Sebastian Sprenger",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/heinzelmannchen/heinzelmannchen/issues"
+    "url": "https://github.com/heinzelmannchen/heinzelmannche-templaten/issues"
   },
-  "homepage": "https://github.com/heinzelmannchen/heinzelmannchen",
+  "homepage": "https://github.com/heinzelmannchen/heinzelmannchen-template",
   "devDependencies": {
     "mocha": "~1.17.1",
-    "should": "~3.1.2"
+    "should": "~3.1.2",
+    "mock-fs": "~2.2.0"
+  },
+  "dependencies": {
+    "walk": "~2.3.1",
+    "underscore": "~1.6.0"
   }
 }
