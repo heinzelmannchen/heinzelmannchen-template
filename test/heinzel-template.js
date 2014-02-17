@@ -33,7 +33,7 @@ describe('Template', function() {
         });
 
         it('should throw an error if file doesn\'t exist', function(done) {
-            heinzelTemplate.onReadFileError(function(error) {
+            heinzelTemplate.onError(function(error) {
                 error.should.be.ok;
                 done();
             });
@@ -78,7 +78,7 @@ describe('Template', function() {
                     notValid: 'Berti'
                 };
 
-            heinzelTemplate.onProcessError(function(error) {
+            heinzelTemplate.onError(function(error) {
                 error.should.be.ok;
                 done();
             });
@@ -86,6 +86,26 @@ describe('Template', function() {
         });
     });
 
-    describe.skip('process template file', function() {
+    describe('process template file', function() {
+        beforeEach(function() {
+            mockFs({
+                'foo' : {
+                    'bar.tpl': 'hello <%= heinzel %>'
+                }
+            });
+        });
+        afterEach(function() {
+            heinzelTemplate.eventEmitter.removeAllListeners();
+        });
+
+        it('should process the template from a file', function(done) {
+            heinzelTemplate.onProcessed(function(result) {
+                result.should.equal('hello Anton');
+                done();
+            });
+            heinzelTemplate.processFile('foo/bar.tpl', {
+                heinzel: 'Anton'
+            });
+        });
     });
 });
