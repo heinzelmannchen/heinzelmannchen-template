@@ -87,6 +87,10 @@ describe('Template', function() {
             });
         });
 
+        afterEach(function() {
+            mockFs.restore();
+        });
+
         it('should process the template from a file', function(done) {
             heinzelTemplate.processFile('foo/bar.tpl', {
                 heinzel: 'Anton'
