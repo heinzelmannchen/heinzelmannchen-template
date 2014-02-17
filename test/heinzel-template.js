@@ -6,57 +6,48 @@ describe('Template', function() {
     describe('read file', function() {
         beforeEach(function() {
             mockFs({
-                'foo' : {
+                'foo': {
                     'bar.tpl': 'hello heinzelmännchen'
                 }
             });
         });
 
-        afterEach(function() {
-            heinzelTemplate.eventEmitter.removeAllListeners();
-            mockFs.restore();
-        });
-
         it('should emit a event on read file', function(done) {
-            heinzelTemplate.onReadFile(function() {
-                done();
-            });
-            heinzelTemplate.readFile('foo/bar.tpl');
+            heinzelTemplate.readFile('foo/bar.tpl')
+                .then(function() {
+                    done();
+                });
         });
 
         it('should read "hello heinzelmännchen"', function(done) {
-            heinzelTemplate.onReadFile(function(data) {
-                data.should.equal('hello heinzelmännchen');
-                done();
-            });
-            heinzelTemplate.readFile('foo/bar.tpl');
+            heinzelTemplate.readFile('foo/bar.tpl')
+                .then(function(data) {
+                    data.should.equal('hello heinzelmännchen');
+                    done();
+                });
         });
 
         it('should throw an error if file doesn\'t exist', function(done) {
-            heinzelTemplate.onError(function(error) {
-                error.should.be.ok;
-                done();
-            });
-            heinzelTemplate.readFile('not/existing.tpl');
+            heinzelTemplate.readFile('not/existing.tpl')
+                .fail(function(error) {
+                    error.should.be.ok;
+                    done();
+                });
         });
     });
 
     describe('process template', function() {
-        afterEach(function() {
-            heinzelTemplate.eventEmitter.removeAllListeners();
-        });
-
         it('should process the template', function(done) {
             var template = '<%= heinzel %>',
                 data = {
                     heinzel: 'Berti'
                 };
 
-            heinzelTemplate.onProcessed(function(result) {
-                result.should.equal('Berti');
-                done();
-            });
-            heinzelTemplate.process(template, data);
+            heinzelTemplate.process(template, data)
+                .then(function(result) {
+                    result.should.equal('Berti');
+                    done();
+                });
         });
 
         it('should process the template and execute the JS', function(done) {
@@ -65,11 +56,11 @@ describe('Template', function() {
                     heinzel: 'Berti'
                 };
 
-            heinzelTemplate.onProcessed(function(result) {
-                result.should.equal('BERTI');
-                done();
-            });
-            heinzelTemplate.process(template, data);
+            heinzelTemplate.process(template, data)
+                .then(function(result) {
+                    result.should.equal('BERTI');
+                    done();
+                });
         });
 
         it('should throw an error if the template could not be parsed', function(done) {
@@ -78,33 +69,48 @@ describe('Template', function() {
                     notValid: 'Berti'
                 };
 
-            heinzelTemplate.onError(function(error) {
-                error.should.be.ok;
-                done();
-            });
-            heinzelTemplate.process(template, data);
+            heinzelTemplate.process(template, data)
+                .fail(function(error) {
+                    error.should.be.ok;
+                    done();
+                });
         });
     });
 
     describe('process template file', function() {
         beforeEach(function() {
             mockFs({
-                'foo' : {
-                    'bar.tpl': 'hello <%= heinzel %>'
+                'foo': {
+                    'bar.tpl': 'hello <%= heinzel %>',
+                    'broken.tpl': 'hello <%= notValid %>'
                 }
             });
         });
-        afterEach(function() {
-            heinzelTemplate.eventEmitter.removeAllListeners();
-        });
 
         it('should process the template from a file', function(done) {
-            heinzelTemplate.onProcessed(function(result) {
+            heinzelTemplate.processFile('foo/bar.tpl', {
+                heinzel: 'Anton'
+            }).then(function(result) {
                 result.should.equal('hello Anton');
                 done();
             });
-            heinzelTemplate.processFile('foo/bar.tpl', {
+        });
+
+        it('should throw an error if the file doesn\'t exist', function(done) {
+            heinzelTemplate.processFile('foo/notValid.tpl', {
                 heinzel: 'Anton'
+            }).fail(function(error) {
+                error.should.be.ok;
+                done();
+            });
+        });
+
+        it('should throw an error if the template is broken', function(done) {
+            heinzelTemplate.processFile('foo/broken.tpl', {
+                heinzel: 'Anton'
+            }).fail(function(error) {
+                error.should.be.ok;
+                done();
             });
         });
     });

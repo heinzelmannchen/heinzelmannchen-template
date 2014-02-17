@@ -1,56 +1,52 @@
-var events = require('events'),
+var Q = require('q'),
     fs = require('fs'),
     _ = require('underscore'),
-    ON_READ_FILE = 'readFile',
-    ON_PROCESSED = 'processed',
-    ON_ERROR = 'error',
     READ_OPTIONS = {
         encoding: 'utf-8'
     },
     me = module.exports;
 
-me.eventEmitter = new events.EventEmitter();
 
 me.readFile = function (fileName) {
-
-    fs.readFile(fileName, READ_OPTIONS, function (err, data) {
-        if (err) {
-            me.eventEmitter.emit(ON_ERROR, err);
+    var q = Q.defer();
+    fs.readFile(fileName, READ_OPTIONS, function (error, data) {
+        if (error) {
+            q.reject(error);
         } else {
-            me.eventEmitter.emit(ON_READ_FILE, data);
+            q.resolve(data);
         }
     });
-};
 
-me.onceReadFile = function (callback) {
-    me.eventEmitter.once(ON_READ_FILE, callback);
-};
-
-me.onReadFile = function (callback) {
-    me.eventEmitter.on(ON_READ_FILE, callback);
+    return q.promise;
 };
 
 me.processFile = function (templateFileName, data) {
-    me.onceReadFile(function (content) {
-        me.process(content, data);
-    });
-    me.readFile(templateFileName, READ_OPTIONS);
+    var q = Q.defer();
+
+    me.readFile(templateFileName, READ_OPTIONS)
+        .then(function  onReadFile(content) {
+            me.process(content, data)
+                .then(function  onProcessed(result) {
+                    q.resolve(result);
+                }).fail(function  onReadFileError(error) {
+                    q.reject(error);
+                });
+        }).fail(function  onReadFileError(error) {
+            q.reject(error);
+        });
+
+    return q.promise;
 };
 
 me.process = function (template, data) {
-    var result;
+    var q = Q.defer(),
+        result;
+
     try {
         result = _.template(template, data);
-        me.eventEmitter.emit(ON_PROCESSED, result);
+        q.resolve(result);
     } catch (exception) {
-        me.eventEmitter.emit(ON_ERROR, exception);
+        q.reject(exception);
     }
-};
-
-me.onProcessed = function (callback) {
-    me.eventEmitter.on(ON_PROCESSED, callback);
-};
-
-me.onError = function (callback) {
-    me.eventEmitter.on(ON_ERROR, callback);
+    return q.promise;
 };
