@@ -42,8 +42,47 @@ describe('Template', function() {
     });
 
     describe('process template', function() {
+        afterEach(function() {
+            heinzelTemplate.eventEmitter.removeAllListeners();
+        });
+
         it('should process the template', function(done) {
-            var template = '<%= berti %>';
+            var template = '<%= heinzel %>',
+                data = {
+                    heinzel: 'Berti'
+                };
+
+            heinzelTemplate.onProcessed(function(result) {
+                result.should.equal('Berti');
+                done();
+            });
+            heinzelTemplate.process(template, data);
+        });
+
+        it('should process the template and execute the JS', function(done) {
+            var template = '<%= heinzel.toUpperCase() %>',
+                data = {
+                    heinzel: 'Berti'
+                };
+
+            heinzelTemplate.onProcessed(function(result) {
+                result.should.equal('BERTI');
+                done();
+            });
+            heinzelTemplate.process(template, data);
+        });
+
+        it('should throw an error if the template could not be parsed', function(done) {
+            var template = '<%= heinzel.toUpperCase() %>',
+                data = {
+                    notValid: 'Berti'
+                };
+
+            heinzelTemplate.onProcessError(function(error) {
+                error.should.be.ok;
+                done();
+            });
+            heinzelTemplate.process(template, data);
         });
     });
 });
