@@ -5,8 +5,8 @@ var Q = require('q'),
         encoding: 'utf-8'
     },
     me = module.exports,
-    defaultInterpolate = _.templateSettings.interpolate;
-defaultEvaluate = _.templateSettings.evaluate;
+    defaultInterpolate = _.templateSettings.interpolate,
+    defaultEvaluate = _.templateSettings.evaluate;
 
 _.str = require('underscore.string');
 _.mixin(_.str.exports());
