@@ -4,7 +4,8 @@ var Q = require('q'),
     READ_OPTIONS = {
         encoding: 'utf-8'
     },
-    me = module.exports;
+    me = module.exports,
+    defaultInterpolate = _.templateSettings.interpolate;
 
 _.str = require('underscore.string');
 _.mixin(_.str.exports());
@@ -52,4 +53,18 @@ me.process = function(template, data) {
         q.reject(exception);
     }
     return q.promise;
+};
+
+me.setDelimiter = function(startDelimiter, endDelimiter) {
+    endDelimiter = endDelimiter || startDelimiter;
+
+    _.templateSettings = {
+        interpolate: new RegExp(startDelimiter + "(.+?)" + endDelimiter, "g")
+    };
+};
+
+me.restoreDelimiter = function() {
+    _.templateSettings = {
+        interpolate: defaultInterpolate
+    };
 };

@@ -88,6 +88,23 @@ describe('Template', function() {
                     done();
                 });
         });
+
+        after(function() {
+            heinzelTemplate.restoreDelimiter();
+        });
+        it('should be possible to change the delimiters', function(done) {
+            var template = '&& heinzel &&',
+                data = {
+                    heinzel: 'Berti'
+                };
+
+            heinzelTemplate.setDelimiter('&&');
+            heinzelTemplate.process(template, data)
+                .then(function(result) {
+                    result.should.equal('Berti');
+                    done();
+                });
+        });
     });
 
     describe('process template file', function() {
