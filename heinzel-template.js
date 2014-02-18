@@ -6,7 +6,7 @@ var Q = require('q'),
     },
     me = module.exports,
     defaultInterpolate = _.templateSettings.interpolate;
-    defaultEvaluate = _.templateSettings.evaluate;
+defaultEvaluate = _.templateSettings.evaluate;
 
 _.str = require('underscore.string');
 _.mixin(_.str.exports());
@@ -14,13 +14,13 @@ _.str.include('Underscore.string', 'string'); // => true
 
 me.readFile = function(fileName) {
     var q = Q.defer();
-    fs.readFile(fileName, READ_OPTIONS, function(error, data) {
-        if (error) {
+    Q.nfcall(fs.readFile, fileName, READ_OPTIONS)
+        .then(function(result) {
+            q.resolve(result);
+        })
+        .fail(function(error) {
             q.reject(error);
-        } else {
-            q.resolve(data);
-        }
-    });
+        });
 
     return q.promise;
 };
@@ -30,12 +30,10 @@ me.processFile = function(templateFileName, data) {
 
     me.readFile(templateFileName, READ_OPTIONS)
         .then(function onReadFile(content) {
-            me.process(content, data)
-                .then(function onProcessed(result) {
-                    q.resolve(result);
-                }).fail(function onReadFileError(error) {
-                    q.reject(error);
-                });
+            return me.process(content, data)
+        })
+        .then(function onProcessed(result) {
+            q.resolve(result);
         }).fail(function onReadFileError(error) {
             q.reject(error);
         });
@@ -53,6 +51,7 @@ me.process = function(template, data) {
     } catch (exception) {
         q.reject(exception);
     }
+
     return q.promise;
 };
 
