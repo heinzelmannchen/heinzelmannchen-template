@@ -93,7 +93,7 @@ describe('Template', function() {
             heinzelTemplate.restoreDelimiter();
         });
         it('should be possible to change the delimiters', function(done) {
-            var template = '&& heinzel &&',
+            var template = '&&if(heinzel == "Berti") heinzel = "Anton";&&&&=heinzel&&',
                 data = {
                     heinzel: 'Berti'
                 };
@@ -101,9 +101,10 @@ describe('Template', function() {
             heinzelTemplate.setDelimiter('&&');
             heinzelTemplate.process(template, data)
                 .then(function(result) {
-                    result.should.equal('Berti');
+                    result.should.equal('Anton');
                     done();
-                });
+                })
+                .fail(function(error) {console.log(error);});
         });
     });
 

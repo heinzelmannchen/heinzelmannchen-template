@@ -6,6 +6,7 @@ var Q = require('q'),
     },
     me = module.exports,
     defaultInterpolate = _.templateSettings.interpolate;
+    defaultEvaluate = _.templateSettings.evaluate;
 
 _.str = require('underscore.string');
 _.mixin(_.str.exports());
@@ -59,12 +60,14 @@ me.setDelimiter = function(startDelimiter, endDelimiter) {
     endDelimiter = endDelimiter || startDelimiter;
 
     _.templateSettings = {
-        interpolate: new RegExp(startDelimiter + "(.+?)" + endDelimiter, "g")
+        evaluate: new RegExp(startDelimiter + "(.+?)" + endDelimiter, "g"),
+        interpolate: new RegExp(startDelimiter + "=(.+?)" + endDelimiter, "g")
     };
 };
 
 me.restoreDelimiter = function() {
     _.templateSettings = {
+        evaluate: defaultEvaluate,
         interpolate: defaultInterpolate
     };
 };
