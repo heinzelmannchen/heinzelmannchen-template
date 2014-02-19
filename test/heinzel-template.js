@@ -1,4 +1,5 @@
 var should = require('should'),
+    mock = require('mockery'),
     mockFs = require('mock-fs'),
     heinzelTemplate = require('../heinzel-template');
 
@@ -89,6 +90,49 @@ describe('Template', function() {
                 });
         });
 
+        it('should be possible to use custom js-functions in the template', function(done) {
+            var template = 'if (<% function echo(text) { return text + text; } %><%= echo(heinzel)%>) { console.log("graue Mütze") }',
+                data = {
+                    heinzel: 'Anton'
+                };
+
+            heinzelTemplate.process(template, data)
+                .then(function(result) {
+                    result.should.equal('if (AntonAnton) { console.log("graue Mütze") }');
+                    done();
+                });
+        });
+
+        before(function() {
+            mock.enable();
+            var mockFunction = {
+                initials: function(name) {
+                    return name[0];
+                }
+            };
+            mock.registerMock('./custom/script', mockFunction);;
+        });
+        after(function() {
+            mock.disable();
+        });
+        it('should be possible to use custom js-functions from a script', function(done) {
+            var template = '<%= _custom.initials(heinzel) %>',
+                data = {
+                    heinzel: 'Anton'
+                };
+
+            heinzelTemplate.loadCustomScript('./custom/script');
+            global._custom.should.have.property('initials');
+            heinzelTemplate.process(template, data)
+                .then(function(result) {
+                    result.should.equal('A');
+                    done();
+                })
+                .fail(function(error) {
+                    console.log(error);
+                });
+        });
+
         after(function() {
             heinzelTemplate.restoreDelimiter();
         });
@@ -103,8 +147,7 @@ describe('Template', function() {
                 .then(function(result) {
                     result.should.equal('Anton');
                     done();
-                })
-                .fail(function(error) {console.log(error);});
+                });
         });
     });
 

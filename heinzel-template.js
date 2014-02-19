@@ -55,18 +55,26 @@ me.process = function(template, data) {
     return q.promise;
 };
 
+me.loadCustomScript = function(fileName) {
+    global._custom = require(fileName);
+};
+
 me.setDelimiter = function(startDelimiter, endDelimiter) {
+    var evaluate, interpolate;
     endDelimiter = endDelimiter || startDelimiter;
 
-    _.templateSettings = {
-        evaluate: new RegExp(startDelimiter + "(.+?)" + endDelimiter, "g"),
-        interpolate: new RegExp(startDelimiter + "=(.+?)" + endDelimiter, "g")
-    };
+    evaluate = new RegExp(startDelimiter + "(.+?)" + endDelimiter, "g");
+    interpolate = new RegExp(startDelimiter + "=(.+?)" + endDelimiter, "g");
+    setTemplateSettings(evaluate, interpolate);
 };
 
 me.restoreDelimiter = function() {
-    _.templateSettings = {
-        evaluate: defaultEvaluate,
-        interpolate: defaultInterpolate
-    };
+    setTemplateSettings(defaultEvaluate, defaultInterpolate);
 };
+
+function setTemplateSettings(evaluate, interpolate) {
+    _.templateSettings = {
+        evaluate: evaluate,
+        interpolate: interpolate
+    };
+}
