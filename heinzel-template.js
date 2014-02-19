@@ -30,7 +30,7 @@ me.processFile = function(templateFileName, data) {
 
     me.readFile(templateFileName, READ_OPTIONS)
         .then(function onReadFile(content) {
-            return me.process(content, data)
+            return me.process(content, data);
         })
         .then(function onProcessed(result) {
             q.resolve(result);

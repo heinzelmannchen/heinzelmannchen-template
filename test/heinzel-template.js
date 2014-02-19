@@ -112,9 +112,11 @@ describe('Template', function() {
             };
             mock.registerMock('./custom/script', mockFunction);
         });
+
         after(function() {
             mock.disable();
         });
+
         it('should be possible to use custom js-functions from a script', function(done) {
             var template = '<%= _custom.initials(heinzel) %>',
                 data = {
