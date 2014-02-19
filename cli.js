@@ -3,7 +3,6 @@
 var program = require('commander'),
     winston = require('winston'),
     heinzel = require('./heinzel-template');
-winston.cli();
 program
     .description('processes a template with the given data')
     .usage('-t [template] -j [dataFile]')
@@ -11,10 +10,16 @@ program
     .option('-j, --json [value]', 'a json-file containing the data')
     .option('-o, --output [value]', 'output filename')
     .option('-e, --encoding [value]', 'encoding of the files', 'utf-8')
+    .option('-s, --silent', 'no console output')
     .option('-d, --debug', 'print stacktrace')
     .version('0.0.1');
 
 program.parse(process.argv);
+
+winston.cli();
+if (program.silent) {
+    winston.clear();
+}
 
 if (program.template && program.json) {
     run();
