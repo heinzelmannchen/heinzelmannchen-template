@@ -12,10 +12,7 @@ describe('Template', function() {
                 };
 
             heinzelTemplate.process(template, data)
-                .then(function(result) {
-                    result.should.equal('Berti');
-                    done();
-                });
+                .then(resultShouldBe('Berti', done));
         });
 
         it('should process the template and execute the JS', function(done) {
@@ -25,10 +22,7 @@ describe('Template', function() {
                 };
 
             heinzelTemplate.process(template, data)
-                .then(function(result) {
-                    result.should.equal('BERTI');
-                    done();
-                });
+                .then(resultShouldBe('BERTI', done));
         });
 
         it('should throw an error if the template could not be parsed', function(done) {
@@ -38,10 +32,7 @@ describe('Template', function() {
                 };
 
             heinzelTemplate.process(template, data)
-                .fail(function(error) {
-                    error.should.be.ok;
-                    done();
-                });
+                .fail(shouldBeCalled(done));
         });
 
         it('should be possible to use _.str in the templates', function(done) {
@@ -51,10 +42,7 @@ describe('Template', function() {
                 };
 
             heinzelTemplate.process(template, data)
-                .then(function(result) {
-                    result.should.equal('bertiHeinzel');
-                    done();
-                });
+                .then(resultShouldBe('bertiHeinzel', done));
         });
 
         it('should be possible to use custom js-functions in the template', function(done) {
@@ -64,10 +52,7 @@ describe('Template', function() {
                 };
 
             heinzelTemplate.process(template, data)
-                .then(function(result) {
-                    result.should.equal('if (AntonAnton) { console.log("graue Mütze") }');
-                    done();
-                });
+                .then(resultShouldBe('if (AntonAnton) { console.log("graue Mütze") }', done));
         });
 
         before(function() {
@@ -93,10 +78,7 @@ describe('Template', function() {
             heinzelTemplate.loadCustomScript('./custom/script');
             global._custom.should.have.property('initials');
             heinzelTemplate.process(template, data)
-                .then(function(result) {
-                    result.should.equal('A');
-                    done();
-                });
+                .then(resultShouldBe('A', done));
         });
 
         after(function() {
@@ -110,10 +92,7 @@ describe('Template', function() {
 
             heinzelTemplate.setDelimiter('&&');
             heinzelTemplate.process(template, data)
-                .then(function(result) {
-                    result.should.equal('Anton');
-                    done();
-                });
+                .then(resultShouldBe('Anton', done));
         });
     });
 
@@ -135,36 +114,38 @@ describe('Template', function() {
         it('should process the template from a file', function(done) {
             heinzelTemplate.template('foo/bar.tpl', {
                 heinzel: 'Anton'
-            }).then(function(result) {
-                result.should.equal('hello Anton');
-                done();
-            });
+            }).then(resultShouldBe('hello Anton', done));
         });
 
         it('should process the template from a file and the data from a json', function(done) {
             heinzelTemplate.template('foo/bar.tpl', 'foo/bar.json')
-                .then(function(result) {
-                    result.should.equal('hello Conni');
-                    done();
-                });
+                .then(resultShouldBe('hello Conni', done));
         });
 
         it('should throw an error if the file doesn\'t exist', function(done) {
             heinzelTemplate.template('foo/notValid.tpl', {
                 heinzel: 'Anton'
-            }).fail(function(error) {
-                error.should.be.ok;
-                done();
-            });
+            }).fail(shouldBeCalled(done));
         });
 
         it('should throw an error if the template is broken', function(done) {
             heinzelTemplate.template('foo/broken.tpl', {
                 heinzel: 'Anton'
-            }).fail(function(error) {
-                error.should.be.ok;
-                done();
-            });
+            }).fail(shouldBeCalled(done));
         });
     });
+
+    function resultShouldBe(expected, done) {
+        return function(result) {
+            result.should.equal(expected);
+            done();
+        }
+    }
+
+    function shouldBeCalled(done) {
+        return function(result) {
+            result.should.be.ok;
+            done();
+        }
+    }
 });
