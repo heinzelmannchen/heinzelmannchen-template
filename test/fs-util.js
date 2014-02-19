@@ -48,23 +48,4 @@ describe('lib/fs-util', function() {
             });
         });
     });
-    describe('#isFile', function() {
-        beforeEach(function() {
-            mockFs({
-                'foo': {
-                    'bar.tpl': 'hello Edi'
-                }
-            });
-        });
-
-        it('should return true if it is a file', function() {
-            fsUtil.isFile('foo/bar.tpl').should.be.ok;
-        });
-
-        it('should return false if it is not a file', function() {
-            fsUtil.isFile('not/existing.tpl').should.be.not.ok;
-            fsUtil.isFile(1).should.be.not.ok;
-            fsUtil.isFile().should.be.not.ok;
-        });
-    });
 });
