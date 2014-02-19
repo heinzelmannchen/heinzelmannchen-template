@@ -26,4 +26,13 @@ describe('lib/fs-util', function() {
                 done();
             });
     });
+
+    it('should return the object if not a file and typeof object', function(done) {
+        fsUtil.readFileOrReturnData({
+            foo: 'bar'
+        }).then(function(obj) {
+            obj.should.have.property('foo');
+            done();
+        });
+    });
 });
