@@ -7,7 +7,10 @@ describe('lib/fs-util', function() {
         beforeEach(function() {
             mockFs({
                 'foo': {
-                    'bar.tpl': 'hello Edi'
+                    'bar.tpl': 'hello Edi',
+                    'no.one' : {
+                        mode: '000'
+                    }
                 }
             });
         });
@@ -22,6 +25,14 @@ describe('lib/fs-util', function() {
 
         it('should throw an error if file doesn\'t exist', function(done) {
             fsUtil.readFileOrReturnData('not/existing.tpl')
+                .fail(function(error) {
+                    error.should.be.ok;
+                    done();
+                });
+        });
+
+        it('should fail if no permission', function(done) {
+            fsUtil.readFileOrReturnData('foo/no.one')
                 .fail(function(error) {
                     error.should.be.ok;
                     done();
