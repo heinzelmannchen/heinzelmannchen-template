@@ -4,39 +4,6 @@ var should = require('should'),
     heinzelTemplate = require('../heinzel-template');
 
 describe('Template', function() {
-    describe('read file', function() {
-        beforeEach(function() {
-            mockFs({
-                'foo': {
-                    'bar.tpl': 'hello heinzelmännchen'
-                }
-            });
-        });
-
-        it('should emit a event on read file', function(done) {
-            heinzelTemplate.readFile('foo/bar.tpl')
-                .then(function() {
-                    done();
-                });
-        });
-
-        it('should read "hello heinzelmännchen"', function(done) {
-            heinzelTemplate.readFile('foo/bar.tpl')
-                .then(function(data) {
-                    data.should.equal('hello heinzelmännchen');
-                    done();
-                });
-        });
-
-        it('should throw an error if file doesn\'t exist', function(done) {
-            heinzelTemplate.readFile('not/existing.tpl')
-                .fail(function(error) {
-                    error.should.be.ok;
-                    done();
-                });
-        });
-    });
-
     describe('process template', function() {
         it('should process the template', function(done) {
             var template = '<%= heinzel %>',
@@ -155,6 +122,7 @@ describe('Template', function() {
             mockFs({
                 'foo': {
                     'bar.tpl': 'hello <%= heinzel %>',
+                    'bar.json': '{ "heinzel": "Conni" }',
                     'broken.tpl': 'hello <%= notValid %>'
                 }
             });
@@ -165,7 +133,7 @@ describe('Template', function() {
         });
 
         it('should process the template from a file', function(done) {
-            heinzelTemplate.processFile('foo/bar.tpl', {
+            heinzelTemplate.template('foo/bar.tpl', {
                 heinzel: 'Anton'
             }).then(function(result) {
                 result.should.equal('hello Anton');
@@ -173,8 +141,16 @@ describe('Template', function() {
             });
         });
 
+        it('should process the template from a file and the data from a json', function(done) {
+            heinzelTemplate.template('foo/bar.tpl', 'foo/bar.json')
+                .then(function(result) {
+                    result.should.equal('hello Conni');
+                    done();
+                });
+        });
+
         it('should throw an error if the file doesn\'t exist', function(done) {
-            heinzelTemplate.processFile('foo/notValid.tpl', {
+            heinzelTemplate.template('foo/notValid.tpl', {
                 heinzel: 'Anton'
             }).fail(function(error) {
                 error.should.be.ok;
@@ -183,7 +159,7 @@ describe('Template', function() {
         });
 
         it('should throw an error if the template is broken', function(done) {
-            heinzelTemplate.processFile('foo/broken.tpl', {
+            heinzelTemplate.template('foo/broken.tpl', {
                 heinzel: 'Anton'
             }).fail(function(error) {
                 error.should.be.ok;

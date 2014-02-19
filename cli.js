@@ -9,6 +9,7 @@ program
     .option('-t, --template [value]', 'the template')
     .option('-j, --json [value]', 'a json-file containing the data')
     .option('-o, --output [value]', 'output filename')
+    .option('-e, --encoding [value]', 'encoding of the files', 'utf-8')
     .option('-d, --debug', 'print stacktrace')
     .version('0.0.1');
 
@@ -21,12 +22,7 @@ if (program.template && program.json) {
 }
 
 function run() {
-    heinzel.readFile(program.json, {
-        charset: 'utf-8'
-    })
-        .then(function onReadFile(content) {
-            return heinzel.processFile(program.template, JSON.parse(content));
-        })
+    heinzel.processFile(program.template, program.json)
         .then(function(result) {
             console.log(result);
         }).fail(onFail);

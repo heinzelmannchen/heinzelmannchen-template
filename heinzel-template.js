@@ -1,9 +1,6 @@
 var Q = require('q'),
-    fs = require('fs'),
+    fsUtil = require('./lib/fs-util'),
     _ = require('underscore'),
-    READ_OPTIONS = {
-        encoding: 'utf-8'
-    },
     me = module.exports,
     defaultInterpolate = _.templateSettings.interpolate,
     defaultEvaluate = _.templateSettings.evaluate;
@@ -12,25 +9,21 @@ _.str = require('underscore.string');
 _.mixin(_.str.exports());
 _.str.include('Underscore.string', 'string'); // => true
 
-me.readFile = function(fileName) {
-    var q = Q.defer();
-    Q.nfcall(fs.readFile, fileName, READ_OPTIONS)
-        .then(function(result) {
-            q.resolve(result);
+me.template = function(templateOrFile, dataOrFile) {
+    var q = Q.defer(),
+        data;
+
+    fsUtil.readFileOrReturnData(dataOrFile)
+        .then(function onDataRead(content) {
+            if (typeof content === 'string') {
+                data = JSON.parse(content);
+            } else {
+                data = content;
+            }
+            return fsUtil.readFileOrReturnData(templateOrFile);
         })
-        .fail(function(error) {
-            q.reject(error);
-        });
-
-    return q.promise;
-};
-
-me.processFile = function(templateFileName, data) {
-    var q = Q.defer();
-
-    me.readFile(templateFileName, READ_OPTIONS)
-        .then(function onReadFile(content) {
-            return me.process(content, data);
+        .then(function onTemplateRead(template) {
+            return me.process(template, data);
         })
         .then(function onProcessed(result) {
             q.resolve(result);
@@ -51,7 +44,6 @@ me.process = function(template, data) {
     } catch (exception) {
         q.reject(exception);
     }
-
     return q.promise;
 };
 
