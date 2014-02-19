@@ -9,7 +9,7 @@ _.str = require('underscore.string');
 _.mixin(_.str.exports());
 _.str.include('Underscore.string', 'string'); // => true
 
-me.template = function(templateOrFile, dataOrFile) {
+me.template = function(template, dataOrFile) {
     var q = Q.defer(),
         data;
 
@@ -20,7 +20,7 @@ me.template = function(templateOrFile, dataOrFile) {
             } else {
                 data = content;
             }
-            return fsUtil.readFileOrReturnData(templateOrFile);
+            return fsUtil.readFileOrReturnData(template);
         })
         .then(function onTemplateRead(template) {
             return me.process(template, data);
@@ -34,12 +34,12 @@ me.template = function(templateOrFile, dataOrFile) {
     return q.promise;
 };
 
-me.process = function(template, data) {
+me.process = function(templateString, data) {
     var q = Q.defer(),
         result;
 
     try {
-        result = _.template(template, data);
+        result = _.template(templateString, data);
         q.resolve(result);
     } catch (exception) {
         q.reject(exception);
