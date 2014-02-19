@@ -110,7 +110,7 @@ describe('Template', function() {
                     return name[0];
                 }
             };
-            mock.registerMock('./custom/script', mockFunction);;
+            mock.registerMock('./custom/script', mockFunction);
         });
         after(function() {
             mock.disable();
@@ -127,9 +127,6 @@ describe('Template', function() {
                 .then(function(result) {
                     result.should.equal('A');
                     done();
-                })
-                .fail(function(error) {
-                    console.log(error);
                 });
         });
 
