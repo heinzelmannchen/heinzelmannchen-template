@@ -28,6 +28,7 @@
     "underscore": "~1.6.0",
     "q": "~1.0.0",
     "underscore.string": "~2.3.3",
-    "commander": "~2.1.0"
+    "commander": "~2.1.0",
+    "winston": "~0.7.2"
   }
 }

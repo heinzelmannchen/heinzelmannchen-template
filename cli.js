@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 
 var program = require('commander'),
+    winston = require('winston'),
     heinzel = require('./heinzel-template');
-
+winston.cli();
 program
     .description('processes a template with the given data')
     .usage('-t [template] -j [dataFile]')
@@ -22,15 +23,18 @@ if (program.template && program.json) {
 }
 
 function run() {
+    winston.info('The heinzelmännchen started working...');
     heinzel.template(program.template, program.json)
         .then(function(result) {
-            console.log(result);
+            winston.data(result);
+            winston.info('Successfull!');
         }).fail(onFail);
 }
 
 function onFail(error) {
-    console.error(error);
+    winston.error('Processing template failed!');
+    winston.error('Message: ' + error.message);
     if (program.debug) {
-        console.trace();
+        winston.data(error);
     }
 }
