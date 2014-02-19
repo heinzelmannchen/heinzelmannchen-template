@@ -22,7 +22,7 @@ if (program.template && program.json) {
 }
 
 function run() {
-    heinzel.processFile(program.template, program.json)
+    heinzel.template(program.template, program.json)
         .then(function(result) {
             console.log(result);
         }).fail(onFail);
