@@ -52,39 +52,22 @@ me.process = function(templateString, data) {
 
 me.write = function(file, content, options) {
     var q = Q.defer(),
-        filePath = path.dirname(file);
+        filePath = path.dirname(file),
+        isFolderCreationAllowed = options && options.force;
 
-    Q.nfcall(fs.stat, filePath)
-        .then(createFile(file, content))
-        .catch(function(error) {
-            if (error.code === 'ENOENT' && options && options.force) {
-                //path doesn't exist and should be created
-                Q.nfcall(nodeFs.mkdir, filePath, 0777, true)
-                    .then(function() {
-                        return createFile(file, content);
-                    });
-            } 
+    fsUtil.enurePathExists(filePath, isFolderCreationAllowed)
+        .then(function onPathExists() {
+            return fsUtil.createFile(file, content);
+        })
+        .then(function onFileCreated() {
+            q.resolve();
+        })
+        .catch(function onError(error) {
             q.reject(error);
         });
 
     return q.promise;
 };
-
-function createFile(pathName, content) {
-    var q = Q.defer();
-
-    Q.nfcall(fs.writeFile, pathName, content)
-        .then(function() {
-            console.log('created file;' + pathName);
-            q.resolve();
-        })
-        .catch(function(error) {
-            console.log('file not created;' + error);
-            q.reject(error);
-        });
-
-    return q.promise;
-}
 
 me.loadCustomScript = function(fileName) {
     global._custom = require(fileName);

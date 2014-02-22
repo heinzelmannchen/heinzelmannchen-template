@@ -151,26 +151,27 @@ describe('Template', function() {
 
         it('should write a string into a new file', function(done) {
             heinzelTemplate.write('foo/newFile.json', 'write me')
-                .then(fsUtil.readFileOrReturnData('foo/newFile.json')
-                .then(resultShouldBe('write me', done)));
+                .then(function() {
+                    return fsUtil.readFileOrReturnData('foo/newFile.json');
+                })
+                .then(resultShouldBe('write me', done));
         });
-
+        
         it('should fail if directory doesn\'t exist', function(done) {
-            console.log('2');
             heinzelTemplate.write('foo/bar/newFile.json', 'write me')
                 .fail(shouldBeCalled(done));
         });
         
         it('should create directory if force option is used', function(done) {
-            console.log('3');
             heinzelTemplate.write('foo/bar/moar/stuff/newFile.json', 'write me', { force: true })
-                .then(fsUtil.readFileOrReturnData('foo/bar/moar/stuff/newFile.json')
-                .then(resultShouldBe('write me', done))
-                .catch(function(error) {
-                    console.log('eh nöd?');
-                    done();
-                }));
+                .then(function() {
+                    return fsUtil.readFileOrReturnData('foo/bar/moar/stuff/newFile.json');
+                })
+                .then(resultShouldBe('write me', done));
+        });
 
+        it.skip('should resolve path variables', function(done) {
+            
         });
     });
 
