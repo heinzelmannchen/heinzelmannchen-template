@@ -1,6 +1,5 @@
 var Q = require('q'),
     fs = require('fs'),
-    nodeFs = require('node-fs'),
     fsUtil = require('./lib/fs-util'),
     path = require('path'),
     _ = require('underscore'),
@@ -39,10 +38,11 @@ me.template = function(template, dataOrFile) {
 
 me.process = function(templateString, data) {
     var q = Q.defer(),
+        templateData = data || {},
         result;
 
     try {
-        result = _.template(templateString, data);
+        result = _.template(templateString, templateData);
         q.resolve(result);
     } catch (exception) {
         q.reject(exception);
@@ -52,19 +52,26 @@ me.process = function(templateString, data) {
 
 me.write = function(file, content, options) {
     var q = Q.defer(),
-        filePath = path.dirname(file),
-        isFolderCreationAllowed = options && options.force;
+        filePath,
+        filePathAndName,
+        pathVariables = (options|| {}).data,
+        isFolderCreationAllowed = !!(options && options.force);
 
-    fsUtil.enurePathExists(filePath, isFolderCreationAllowed)
-        .then(function onPathExists() {
-            return fsUtil.createFile(file, content);
-        })
-        .then(function onFileCreated() {
-            q.resolve();
-        })
-        .catch(function onError(error) {
-            q.reject(error);
-        });
+        me.process(file, pathVariables)
+            .then(function onPathVariablesProcessed(processedPath) {
+                filePathAndName = processedPath;
+                filePath = path.dirname(filePathAndName);
+                return fsUtil.enurePathExists(filePath, isFolderCreationAllowed);
+            })
+            .then(function onPathExists() {
+                return fsUtil.createFile(filePathAndName, content);
+            })
+            .then(function onFileCreated() {
+                q.resolve();
+            })
+            .catch(function onError(error) {
+                q.reject(error);
+            });
 
     return q.promise;
 };

@@ -140,7 +140,9 @@ describe('Template', function() {
         beforeEach(function() {
             mockFs({
                 'foo': {
-                    'existing.json': '{ heinzel: \'Conni\' }'
+                    'existing.json': '{ heinzel: \'Conni\' }',
+                    'Fritzchen': {
+                    }
                 }
             });
         });
@@ -158,20 +160,32 @@ describe('Template', function() {
         });
         
         it('should fail if directory doesn\'t exist', function(done) {
-            heinzelTemplate.write('foo/bar/newFile.json', 'write me')
+            heinzelTemplate.write('foo/nothere/newFile.json', 'write me')
                 .fail(shouldBeCalled(done));
         });
         
         it('should create directory if force option is used', function(done) {
-            heinzelTemplate.write('foo/bar/moar/stuff/newFile.json', 'write me', { force: true })
+            heinzelTemplate.write('foo/bar/newFile.json', 'write me', { force: true })
                 .then(function() {
-                    return fsUtil.readFileOrReturnData('foo/bar/moar/stuff/newFile.json');
+                    return fsUtil.readFileOrReturnData('foo/bar/newFile.json');
                 })
                 .then(resultShouldBe('write me', done));
         });
 
-        it.skip('should resolve path variables', function(done) {
-            
+        it('should resolve path variables', function(done) {
+            var filePathTemplate = 'foo/<%= heinzel %>/newFile.json',
+                data = { heinzel: 'Fritzchen' },
+                options = { data: data, force: true },
+                content = 'write me';
+
+            heinzelTemplate.write(filePathTemplate, content, options)
+                .then(function() {
+                    return fsUtil.readFileOrReturnData('foo/Fritzchen/newFile.json');
+                })
+                .then(resultShouldBe('write me', done))
+                .catch(function(error) {
+                    console.log(error);
+                });
         });
     });
 
