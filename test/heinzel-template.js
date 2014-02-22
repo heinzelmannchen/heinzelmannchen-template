@@ -1,6 +1,7 @@
 var should = require('should'),
     mock = require('mockery'),
     mockFs = require('mock-fs'),
+    fsUtil = require('../lib/fs-util'),
     heinzelTemplate = require('../heinzel-template');
 
 describe('Template', function() {
@@ -132,6 +133,44 @@ describe('Template', function() {
             heinzelTemplate.template('foo/broken.tpl', {
                 heinzel: 'Anton'
             }).fail(shouldBeCalled(done));
+        });
+    });
+
+    describe('write processed template', function() {
+        beforeEach(function() {
+            mockFs({
+                'foo': {
+                    'existing.json': '{ heinzel: \'Conni\' }'
+                }
+            });
+        });
+
+        afterEach(function() {
+            mockFs.restore();
+        });
+
+        it('should write a string into a new file', function(done) {
+            heinzelTemplate.write('foo/newFile.json', 'write me')
+                .then(fsUtil.readFileOrReturnData('foo/newFile.json')
+                .then(resultShouldBe('write me', done)));
+        });
+
+        it('should fail if directory doesn\'t exist', function(done) {
+            console.log('2');
+            heinzelTemplate.write('foo/bar/newFile.json', 'write me')
+                .fail(shouldBeCalled(done));
+        });
+        
+        it('should create directory if force option is used', function(done) {
+            console.log('3');
+            heinzelTemplate.write('foo/bar/moar/stuff/newFile.json', 'write me', { force: true })
+                .then(fsUtil.readFileOrReturnData('foo/bar/moar/stuff/newFile.json')
+                .then(resultShouldBe('write me', done))
+                .catch(function(error) {
+                    console.log('eh nöd?');
+                    done();
+                }));
+
         });
     });
 
