@@ -48,4 +48,55 @@ describe('lib/fs-util', function() {
             });
         });
     });
+
+    describe('#createFile', function() {
+        beforeEach(function() {
+            mockFs({
+                'foo': {}
+            });
+        });
+
+        it('should create a file', function(done) {
+            fsUtil.createFile('foo/newFile.x', 'content')
+                .then(function() {
+                    return fsUtil.readFileOrReturnData('foo/newFile.x');
+                }).then(function(readContent) {
+                    readContent.should.equal('content');
+                    done();
+                });
+        });
+
+        it('should file if path doesn\'t exist', function(done) {
+            fsUtil.createFile('foo/bar/newFile.x', 'content')
+                .catch(function(error) {
+                    error.should.be.ok;
+                    done();
+                });
+        });
+    });
+
+    describe('#pathExists', function() {
+        beforeEach(function() {
+            mockFs({
+                'foo/bar/test/file.x': {}
+            });
+        });
+
+        it('should return true if paths exists', function(done) {
+            fsUtil.pathExists('foo/bar/test')
+                .then(function(exists) {
+                    exists.should.equal(true);
+                    done();
+                });
+        });
+
+        it('should return false if path doesn\'t exst', function(done) {
+            fsUtil.pathExists('foo/secret/bar')
+                .then(function(exists) {
+                    exists.should.equal(false);
+                    done();
+                });
+        });
+    });
+
 });
