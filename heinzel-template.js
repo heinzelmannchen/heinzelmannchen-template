@@ -1,6 +1,6 @@
 var Q = require('q'),
     fs = require('fs'),
-    fsUtil = require('./lib/fs-util'),
+    fsUtil = require('heinzelmannchen-fs'),
     path = require('path'),
     _ = require('underscore'),
     me = module.exports,

@@ -1,6 +1,6 @@
 var mock = require('mockery'),
     mockFs = require('mock-fs'),
-    fsUtil = require('../lib/fs-util'),
+    fsUtil = require('heinzelmannchen-fs'),
     heinzelTemplate = require('../heinzel-template');
 
 describe('Template', function() {

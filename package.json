@@ -32,6 +32,7 @@
     "underscore.string": "~2.3.3",
     "commander": "~2.1.0",
     "winston": "~0.7.2",
-    "node-fs": "~0.1.7"
+    "node-fs": "~0.1.7",
+    "heinzelmannchen-fs": "git://github.com/heinzelmannchen/heinzelmannchen-fs.git#master"
   }
 }
