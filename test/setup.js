@@ -5,3 +5,4 @@ require("mocha-as-promised")();
 
 chai.use(require('chai-fuzzy'));
 chai.use(require('chai-as-promised'));
+chai.use(require("sinon-chai"));
