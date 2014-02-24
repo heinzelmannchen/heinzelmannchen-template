@@ -4,7 +4,7 @@
   "description": "template engine",
   "main": "heinzel-template.js",
   "scripts": {
-    "test": "mocha",
+    "test": "mocha --reporter spec",
     "coverage": "istanbul cover node_modules/mocha/bin/_mocha"
   },
   "bin": {
