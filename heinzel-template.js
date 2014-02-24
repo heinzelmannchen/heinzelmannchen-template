@@ -5,15 +5,15 @@ var Q = require('q'),
     _ = require('underscore'),
     me = module.exports,
     defaultInterpolate = _.templateSettings.interpolate,
-    defaultEvaluate = _.templateSettings.evaluate;
+    defaultEvaluate = _.templateSettings.evaluate,
+    data;
 
 _.str = require('underscore.string');
 _.mixin(_.str.exports());
 _.str.include('Underscore.string', 'string'); // => true
 
 me.template = function(template, dataOrFile) {
-    var q = Q.defer(),
-        data;
+    var q = Q.defer();
 
     fsUtil.readFileOrReturnData(dataOrFile)
         .then(function onDataRead(content) {
@@ -91,6 +91,10 @@ me.setDelimiter = function(startDelimiter, endDelimiter) {
 me.restoreDelimiter = function() {
     setTemplateSettings(defaultEvaluate, defaultInterpolate);
 };
+
+me.getData = function() {
+    return data;
+}
 
 function setTemplateSettings(evaluate, interpolate) {
     _.templateSettings = {

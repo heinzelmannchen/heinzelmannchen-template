@@ -1,12 +1,7 @@
-var chai = require("chai"),
-    chaiAsPromised = require("chai-as-promised"),
-    should = chai.Should(),
-    mochaAsPromised = require("mocha-as-promised")(),
-    mock = require('mockery'),
+var mock = require('mockery'),
     mockFs = require('mock-fs'),
     fsUtil = require('../lib/fs-util'),
     heinzelTemplate = require('../heinzel-template');
-chai.use(chaiAsPromised);
 
 describe('Template', function() {
     describe('#process', function() {
@@ -117,6 +112,15 @@ describe('Template', function() {
 
         it('should process the template from a file and the data from a json', function() {
             return heinzelTemplate.template('foo/bar.tpl', 'foo/bar.json').should.become('hello Conni');
+        });
+
+        it('should have stored the read jsondata in a object', function() {
+            return heinzelTemplate.template('foo/bar.tpl', 'foo/bar.json')
+                .then(function() {
+                    heinzelTemplate.getData().should.be.like({
+                        heinzel: 'Conni'
+                    });
+                });
         });
 
         it('should throw an error if the file doesn\'t exist', function() {
