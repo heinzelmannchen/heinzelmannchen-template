@@ -31,15 +31,33 @@ function run() {
     winston.info('The heinzelmännchen started working...');
     heinzel.template(program.template, program.json)
         .then(function(result) {
+            var options = {
+                force: program.force,
+                data: heinzel.getData()
+            };
             winston.data(result);
-            winston.info('Successfull!');
-        }).fail(onFail);
+            if (program.output) {
+                return heinzel.write(program.output, result, options);
+            } else {
+                return;
+            }
+        })
+        .then(finished)
+        .fail(onFail);
+}
+
+function finished(path) {
+    if (path) {
+        winston.info('File writen to: ', path);
+    }
+    winston.info('Successfull!');
 }
 
 function onFail(error) {
     winston.error('Processing template failed!');
     winston.error('Message: ' + error.message);
     if (program.debug) {
+        console.trace();
         winston.data(error);
     }
 }
