@@ -151,6 +151,18 @@ describe('Template', function() {
         });
 
         it('should write a string into a new file', function() {
+            return heinzelTemplate.write('foo/existing.json', 'write me').should.be.rejected;
+        });
+
+        it('should write to a existing file if override is set', function() {
+            return heinzelTemplate.write('foo/existing.json', 'new content', {
+                override: true
+            }).then(function() {
+                return fsUtil.readFileOrReturnData('foo/existing.json');
+            }).should.become('new content');
+        });
+
+        it('should fail if the file already exists', function() {
             return heinzelTemplate.write('foo/newFile.json', 'write me')
                 .then(function() {
                     return fsUtil.readFileOrReturnData('foo/newFile.json');

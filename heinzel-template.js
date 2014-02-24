@@ -67,6 +67,13 @@ me.write = function(file, content, options) {
             }
         })
         .then(function onPathExists() {
+            if (options.override) {
+                return fsUtil.removeFile(filePathAndName); 
+            } else {
+                return q.promise;
+            }
+        })
+        .then(function () {
             return fsUtil.createFile(filePathAndName, content);
         })
         .then(function onFileCreated() {
