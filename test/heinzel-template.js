@@ -1,59 +1,58 @@
-var should = require('should'),
+var chai = require("chai"),
+    chaiAsPromised = require("chai-as-promised"),
+    should = chai.Should(),
+    mochaAsPromised = require("mocha-as-promised")(),
     mock = require('mockery'),
     mockFs = require('mock-fs'),
     fsUtil = require('../lib/fs-util'),
     heinzelTemplate = require('../heinzel-template');
+chai.use(chaiAsPromised);
 
 describe('Template', function() {
-    describe('process template', function() {
-        it('should process the template', function(done) {
+    describe('#process', function() {
+        it('should process the template', function() {
             var template = '<%= heinzel %>',
                 data = {
                     heinzel: 'Berti'
                 };
 
-            heinzelTemplate.process(template, data)
-                .then(resultShouldBe('Berti', done));
+            return heinzelTemplate.process(template, data).should.become('Berti');
         });
 
-        it('should process the template and execute the JS', function(done) {
+        it('should process the template and execute the JS', function() {
             var template = '<%= heinzel.toUpperCase() %>',
                 data = {
                     heinzel: 'Berti'
                 };
 
-            heinzelTemplate.process(template, data)
-                .then(resultShouldBe('BERTI', done));
+            return heinzelTemplate.process(template, data).should.become('BERTI');
         });
 
-        it('should throw an error if the template could not be parsed', function(done) {
+        it('should throw an error if the template could not be parsed', function() {
             var template = '<%= heinzel.toUpperCase() %>',
                 data = {
                     notValid: 'Berti'
                 };
 
-            heinzelTemplate.process(template, data)
-                .fail(shouldBeCalled(done));
+            return heinzelTemplate.process(template, data).should.be.rejected;
         });
 
-        it('should be possible to use _.str in the templates', function(done) {
+        it('should be possible to use _.str in the templates', function() {
             var template = '<%= _.str.camelize(heinzel) %>',
                 data = {
                     heinzel: 'berti-heinzel'
                 };
 
-            heinzelTemplate.process(template, data)
-                .then(resultShouldBe('bertiHeinzel', done));
+            return heinzelTemplate.process(template, data).should.become('bertiHeinzel');
         });
 
-        it('should be possible to use custom js-functions in the template', function(done) {
+        it('should be possible to use custom js-functions in the template', function() {
             var template = 'if (<% function echo(text) { return text + text; } %><%= echo(heinzel)%>) { console.log("graue Mütze") }',
                 data = {
                     heinzel: 'Anton'
                 };
 
-            heinzelTemplate.process(template, data)
-                .then(resultShouldBe('if (AntonAnton) { console.log("graue Mütze") }', done));
+            return heinzelTemplate.process(template, data).should.become('if (AntonAnton) { console.log("graue Mütze") }');
         });
 
         before(function() {
@@ -70,7 +69,7 @@ describe('Template', function() {
             mock.disable();
         });
 
-        it('should be possible to use custom js-functions from a script', function(done) {
+        it('should be possible to use custom js-functions from a script', function() {
             var template = '<%= _custom.initials(heinzel) %>',
                 data = {
                     heinzel: 'Anton'
@@ -78,22 +77,20 @@ describe('Template', function() {
 
             heinzelTemplate.loadCustomScript('./custom/script');
             global._custom.should.have.property('initials');
-            heinzelTemplate.process(template, data)
-                .then(resultShouldBe('A', done));
+            return heinzelTemplate.process(template, data).should.become('A');
         });
 
         after(function() {
             heinzelTemplate.restoreDelimiter();
         });
-        it('should be possible to change the delimiters', function(done) {
+        it('should be possible to change the delimiters', function() {
             var template = '&&if(heinzel == "Berti") heinzel = "Anton";&&&&=heinzel&&',
                 data = {
                     heinzel: 'Berti'
                 };
 
             heinzelTemplate.setDelimiter('&&');
-            heinzelTemplate.process(template, data)
-                .then(resultShouldBe('Anton', done));
+            return heinzelTemplate.process(template, data).should.become('Anton');
         });
     });
 
@@ -112,27 +109,26 @@ describe('Template', function() {
             mockFs.restore();
         });
 
-        it('should process the template from a file', function(done) {
-            heinzelTemplate.template('foo/bar.tpl', {
+        it('should process the template from a file', function() {
+            return heinzelTemplate.template('foo/bar.tpl', {
                 heinzel: 'Anton'
-            }).then(resultShouldBe('hello Anton', done));
+            }).should.become('hello Anton');
         });
 
-        it('should process the template from a file and the data from a json', function(done) {
-            heinzelTemplate.template('foo/bar.tpl', 'foo/bar.json')
-                .then(resultShouldBe('hello Conni', done));
+        it('should process the template from a file and the data from a json', function() {
+            return heinzelTemplate.template('foo/bar.tpl', 'foo/bar.json').should.become('hello Conni');
         });
 
-        it('should throw an error if the file doesn\'t exist', function(done) {
-            heinzelTemplate.template('foo/notValid.tpl', {
+        it('should throw an error if the file doesn\'t exist', function() {
+            return heinzelTemplate.template('foo/notValid.tpl', {
                 heinzel: 'Anton'
-            }).fail(shouldBeCalled(done));
+            }).should.be.rejected;
         });
 
-        it('should throw an error if the template is broken', function(done) {
-            heinzelTemplate.template('foo/broken.tpl', {
+        it('should throw an error if the template is broken', function() {
+            return heinzelTemplate.template('foo/broken.tpl', {
                 heinzel: 'Anton'
-            }).fail(shouldBeCalled(done));
+            }).should.be.rejected;
         });
     });
 
@@ -150,35 +146,30 @@ describe('Template', function() {
             mockFs.restore();
         });
 
-        it('should write a string into a new file', function(done) {
-            heinzelTemplate.write('foo/newFile.json', 'write me')
+        it('should write a string into a new file', function() {
+            return heinzelTemplate.write('foo/newFile.json', 'write me')
                 .then(function() {
                     return fsUtil.readFileOrReturnData('foo/newFile.json');
-                })
-                .then(resultShouldBe('write me', done));
+                }).should.become('write me');
         });
 
-        it('should fail if directory doesn\'t exist', function(done) {
-            heinzelTemplate.write('foo/nothere/newFile.json', 'write me')
-                .fail(shouldBeCalled(done));
+        it('should fail if directory doesn\'t exist', function() {
+            return heinzelTemplate.write('foo/nothere/newFile.json', 'write me').should.be.rejected;
         });
 
-        it('should fail if no filename is passed.', function(done) {
-            heinzelTemplate.write(null, 'write me')
-                .fail(shouldBeCalled(done));
+        it('should fail if no filename is passed.', function() {
+            return heinzelTemplate.write(null, 'write me').should.be.rejected;
         });
 
-        it('should create directory if force option is used', function(done) {
-            heinzelTemplate.write('foo/bar/newFile.json', 'write me', {
+        it('should create directory if force option is used', function() {
+            return heinzelTemplate.write('foo/bar/newFile.json', 'write me', {
                 force: true
-            })
-                .then(function() {
-                    return fsUtil.readFileOrReturnData('foo/bar/newFile.json');
-                })
-                .then(resultShouldBe('write me', done));
+            }).then(function() {
+                return fsUtil.readFileOrReturnData('foo/bar/newFile.json');
+            }).should.become('write me');
         });
 
-        it('should resolve path variables', function(done) {
+        it('should resolve path variables', function() {
             var filePathTemplate = 'foo/<%= heinzel %>/newFile.json',
                 data = {
                     heinzel: 'Fritzchen'
@@ -189,25 +180,7 @@ describe('Template', function() {
                 },
                 content = 'write me';
 
-            heinzelTemplate.write(filePathTemplate, content, options)
-                .then(function(filePathAndName) {
-                    filePathAndName.should.equal('foo/Fritzchen/newFile.json');
-                    done();
-                });
+            return heinzelTemplate.write(filePathTemplate, content, options).should.become('foo/Fritzchen/newFile.json');
         });
     });
-
-    function resultShouldBe(expected, done) {
-        return function(result) {
-            result.should.equal(expected);
-            done();
-        }
-    }
-
-    function shouldBeCalled(done) {
-        return function(result) {
-            result.should.be.ok;
-            done();
-        }
-    }
 });
