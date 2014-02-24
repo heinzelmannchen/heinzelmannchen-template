@@ -52,24 +52,23 @@ me.process = function(templateString, data) {
 
 me.write = function(file, content, options) {
     var q = Q.defer(),
+        options = options|| {},
         filePath,
-        filePathAndName,
-        pathVariables = (options|| {}).data,
-        isFolderCreationAllowed = !!(options && options.force);
+        filePathAndName;
 
-        me.process(file, pathVariables)
+        me.process(file, options.data)
             .then(function onPathVariablesProcessed(processedPath) {
                 filePathAndName = processedPath;
                 filePath = path.dirname(filePathAndName);
-                return fsUtil.enurePathExists(filePath, isFolderCreationAllowed);
+                return fsUtil.enurePathExists(filePath, options.force);
             })
             .then(function onPathExists() {
                 return fsUtil.createFile(filePathAndName, content);
             })
             .then(function onFileCreated() {
-                q.resolve();
+                q.resolve(filePathAndName);
             })
-            .catch(function onError(error) {
+            .fail(function onError(error) {
                 q.reject(error);
             });
 
