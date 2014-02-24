@@ -7,6 +7,9 @@
     "test": "mocha",
     "coverage": "istanbul cover node_modules/mocha/bin/_mocha"
   },
+  "bin": {
+        "heinzel-template" : "bin/cli.js"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/heinzelmannchen/heinzelmannchen-template.git"
