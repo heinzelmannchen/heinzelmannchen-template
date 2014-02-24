@@ -1,13 +1,7 @@
-var chai = require("chai"),
-    should = chai.Should(),
-    mochaAsPromised = require("mocha-as-promised")(),
-    mock = require('mockery'),
+var mock = require('mockery'),
     mockFs = require('mock-fs'),
     fsUtil = require('../lib/fs-util'),
     heinzelTemplate = require('../heinzel-template');
-
-chai.use(require('chai-fuzzy'));
-chai.use(require('chai-as-promised'));
 
 describe('Template', function() {
     describe('#process', function() {
