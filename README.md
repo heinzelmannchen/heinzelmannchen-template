@@ -14,7 +14,7 @@ It uses underscore as the templateeninge of choice.
 Usage
 -----
 
-.h3 CLI
+### CLI
 
 ```
   Usage: heinzel-template -t [template] -j [dataFile]
@@ -34,7 +34,7 @@ Usage
     -V, --version           output the version number
 ```
 
-.h3 Node module
+### Node module
 
 ```javascript
 var ht = require('heinzel-template');
