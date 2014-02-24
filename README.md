@@ -3,8 +3,11 @@
          align="right" valign="top" alt="Promises/A+ logo" />
 </a>
 
-heinzelmannchen
-===============
+heinzelmannchen-template
+========================
+
+heinzel-template is part of heinzelmannchen. It is a CLI- and node tool to process template files.
+It uses underscore as the templateeninge of choice.
 
 [![Build Status](https://travis-ci.org/heinzelmannchen/heinzelmannchen-template.png?branch=master)](https://travis-ci.org/heinzelmannchen/heinzelmannchen-template)
 
