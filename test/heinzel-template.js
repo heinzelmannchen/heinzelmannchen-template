@@ -173,6 +173,15 @@ describe('Template', function() {
             }).should.become('write me');
         });
 
+        it('should have a dryrun option', function() {
+            return heinzelTemplate.write('foo/bar/newFile.json', 'write me', {
+                force: true,
+                dryRun: true
+            }).then(function() {
+                return fsUtil.readFileOrReturnData('foo/bar/newFile.json');
+            }).should.be.rejected;
+        });
+
         it('should resolve path variables', function() {
             var filePathTemplate = 'foo/<%= heinzel %>/newFile.json',
                 data = {
