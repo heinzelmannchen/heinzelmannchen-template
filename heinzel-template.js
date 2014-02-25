@@ -63,7 +63,7 @@ me.write = function(file, content, options) {
             if (options.dryRun) {
                 q.resolve(filePathAndName);
             } else {
-                return fsUtil.enurePathExists(filePath, options.force);
+                return fsUtil.ensurePathExists(filePath, options.force);
             }
         })
         .then(function onPathExists() {
