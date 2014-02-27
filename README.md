@@ -60,9 +60,9 @@ ht.process('<%= name %>', {
 
 ### Template
 
-The templateengine under the hood is [http://documentcloud.github.io/underscore/#template](underscorejs).
+The templateengine under the hood is [underscorejs](http://documentcloud.github.io/underscore/#template).
 By default it uses ERB-style.
-Additional to the functionality provided by undescorejs you can use [http://epeli.github.io/underscore.string/](underscorejs.string)
+Additional to the functionality provided by undescorejs you can use [underscorejs.string](http://epeli.github.io/underscore.string/)
 or load your own module, which will be available under "_custom".
 
 
