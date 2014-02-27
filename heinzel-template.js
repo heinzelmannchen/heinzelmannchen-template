@@ -12,21 +12,14 @@ _.mixin(_.str.exports());
 _.str.include('Underscore.string', 'string');
 
 me.template = function(template, dataOrFile) {
-    var q = Q.defer();
-
-    fsUtil.readFileOrReturnData(dataOrFile)
+    return fsUtil.readFileOrReturnData(dataOrFile)
         .then(function onDataRead(content) {
             data = parseJson(content);
             return fsUtil.readFileOrReturnData(template);
         })
         .then(function onTemplateRead(template) {
             return me.process(template, data);
-        })
-        .then(function onProcessed(result) {
-            q.resolve(result);
-        }).fail(onFail(q));
-
-    return q.promise;
+        });
 };
 
 me.process = function(templateString, data) {
