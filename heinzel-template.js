@@ -1,5 +1,4 @@
 var Q = require('q'),
-    fs = require('fs'),
     fsUtil = require('heinzelmannchen-fs'),
     path = require('path'),
     _ = require('underscore'),
