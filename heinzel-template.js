@@ -70,7 +70,7 @@ me.write = function(file, content, options) {
             if (options.override) {
                 return fsUtil.removeFile(filePathAndName); 
             } else {
-                return q.promise;
+                return;
             }
         })
         .then(function () {
