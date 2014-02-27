@@ -30,9 +30,9 @@ me.process = function(templateString, data) {
 
 me.write = function(file, content, options) {
     var q = Q.defer(),
-        options = options || {},
         filePath,
         filePathAndName;
+    options = options || {};
 
     me.process(file, options.data)
         .then(function onPathVariablesProcessed(processedPath) {
