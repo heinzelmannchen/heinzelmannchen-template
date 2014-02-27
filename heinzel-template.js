@@ -10,18 +10,14 @@ var Q = require('q'),
 
 _.str = require('underscore.string');
 _.mixin(_.str.exports());
-_.str.include('Underscore.string', 'string'); // => true
+_.str.include('Underscore.string', 'string');
 
 me.template = function(template, dataOrFile) {
     var q = Q.defer();
 
     fsUtil.readFileOrReturnData(dataOrFile)
         .then(function onDataRead(content) {
-            if (typeof content === 'string') {
-                data = JSON.parse(content);
-            } else {
-                data = content;
-            }
+            data = parseJson(content);
             return fsUtil.readFileOrReturnData(template);
         })
         .then(function onTemplateRead(template) {
@@ -29,25 +25,15 @@ me.template = function(template, dataOrFile) {
         })
         .then(function onProcessed(result) {
             q.resolve(result);
-        }).fail(function onReadFileError(error) {
-            q.reject(error);
-        });
+        }).fail(onFail);
 
     return q.promise;
 };
 
 me.process = function(templateString, data) {
-    var q = Q.defer(),
-        templateData = data || {},
-        result;
+    var templateData = data || {};
 
-    try {
-        result = _.template(templateString, templateData);
-        q.resolve(result);
-    } catch (exception) {
-        q.reject(exception);
-    }
-    return q.promise;
+    return Q.fcall(_.template, templateString, templateData);
 };
 
 me.write = function(file, content, options) {
@@ -67,21 +53,19 @@ me.write = function(file, content, options) {
             }
         })
         .then(function onPathExists() {
-            if (options.override) {
-                return fsUtil.removeFile(filePathAndName); 
+            if (options.override)  {
+                return fsUtil.removeFile(filePathAndName);
             } else {
                 return;
             }
         })
-        .then(function () {
+        .then(function() {
             return fsUtil.createFile(filePathAndName, content);
         })
         .then(function onFileCreated() {
             q.resolve(filePathAndName);
         })
-        .fail(function onError(error) {
-            q.reject(error);
-        });
+        .fail(onFail);
 
     return q.promise;
 };
@@ -112,4 +96,18 @@ function setTemplateSettings(evaluate, interpolate) {
         evaluate: evaluate,
         interpolate: interpolate
     };
+}
+
+function parseJson(content) {
+    var data;
+    if (typeof content === 'string') {
+        data = JSON.parse(content);
+    } else {
+        data = content;
+    }
+    return data;
+}
+
+function onFail(error) {
+    q.reject(error);
 }
