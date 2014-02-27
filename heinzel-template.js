@@ -25,7 +25,7 @@ me.template = function(template, dataOrFile) {
         })
         .then(function onProcessed(result) {
             q.resolve(result);
-        }).fail(onFail);
+        }).fail(onFail(q));
 
     return q.promise;
 };
@@ -65,7 +65,7 @@ me.write = function(file, content, options) {
         .then(function onFileCreated() {
             q.resolve(filePathAndName);
         })
-        .fail(onFail);
+        .fail(onFail(q));
 
     return q.promise;
 };
@@ -108,6 +108,8 @@ function parseJson(content) {
     return data;
 }
 
-function onFail(error) {
-    q.reject(error);
+function onFail(q) {
+    return function(error) {
+        q.reject(error);
+    }
 }
