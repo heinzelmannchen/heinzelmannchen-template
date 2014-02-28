@@ -29,7 +29,8 @@
     "mocha-as-promised": "~2.0.0",
     "chai-fuzzy": "~1.4.0",
     "sinon": "~1.8.2",
-    "sinon-chai": "~2.5.0"
+    "sinon-chai": "~2.5.0",
+    "mocha-jshint": "0.0.7"
   },
   "dependencies": {
     "underscore": "~1.6.0",
