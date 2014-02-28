@@ -30,14 +30,14 @@ me.process = function(templateString, data) {
 
 me.write = function(file, content, options) {
     var q = Q.defer(),
-        filePath,
         filePathAndName;
     options = options || {};
 
     me.process(file, options.data)
         .then(function onPathVariablesProcessed(processedPath) {
+            var filePath = path.dirname(processedPath);
             filePathAndName = processedPath;
-            filePath = path.dirname(filePathAndName);
+
             if (options.dryRun) {
                 q.resolve(filePathAndName);
             } else {
@@ -70,8 +70,8 @@ me.setDelimiter = function(startDelimiter, endDelimiter) {
     var evaluate, interpolate;
     endDelimiter = endDelimiter || startDelimiter;
 
-    evaluate = new RegExp(startDelimiter + "(.+?)" + endDelimiter, "g");
-    interpolate = new RegExp(startDelimiter + "=(.+?)" + endDelimiter, "g");
+    evaluate = new RegExp(startDelimiter + '(.+?)' + endDelimiter, 'g');
+    interpolate = new RegExp(startDelimiter + '=(.+?)' + endDelimiter, 'g');
     setTemplateSettings(evaluate, interpolate);
 };
 
@@ -81,7 +81,7 @@ me.restoreDelimiter = function() {
 
 me.getData = function() {
     return data;
-}
+};
 
 function setTemplateSettings(evaluate, interpolate) {
     _.templateSettings = {
@@ -103,5 +103,5 @@ function parseJson(content) {
 function onFail(q) {
     return function(error) {
         q.reject(error);
-    }
+    };
 }
