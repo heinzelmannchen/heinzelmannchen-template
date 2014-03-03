@@ -2,6 +2,7 @@ var mock = require('mockery'),
     mockFs = require('mock-fs'),
     fsUtil = require('heinzelmannchen-fs'),
     heinzelTemplate = require('../heinzel-template');
+require('mocha-as-promised')();
 
 describe('Template', function() {
     describe('#process', function() {
@@ -151,7 +152,7 @@ describe('Template', function() {
         });
 
         it('should write a string into a new file', function() {
-            return heinzelTemplate.write('foo/existing.json', 'write me').should.be.rejected;
+            return heinzelTemplate.write('foo/existing.json', 'write me').should.be.fulfilled;
         });
 
         it('should write to a existing file if override is set', function() {
