@@ -1,1 +1,1 @@
-Hello <%= tablename %>!
+Hello <%= table_name %>! 
