@@ -35,6 +35,9 @@ me.templateFromNpm = function(template, dataOrFile) {
     me.template(packagePath, dataOrFile)
         .then(function(data){
             q.resolve(data);
+        })
+        .fail(function(error){
+            q.reject(error);
         });
 
     return q.promise;
