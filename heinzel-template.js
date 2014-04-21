@@ -2,6 +2,7 @@ var Q = require('q'),
     fsUtil = require('heinzelmannchen-fs'),
     path = require('path'),
     _ = require('underscore'),
+    npmUtil = require('heinzelmannchen-npm'),
     me = module.exports,
     defaultInterpolate = _.templateSettings.interpolate,
     defaultEvaluate = _.templateSettings.evaluate,
@@ -20,6 +21,24 @@ me.template = function(template, dataOrFile) {
         .then(function onTemplateRead(template) {
             return me.process(template, data);
         });
+};
+
+me.templateFromNpm = function(template, dataOrFile) {
+    var q = Q.defer(),
+        packagePath;
+
+    try {
+        packagePath = require.resolve(template);
+    } catch (error) {
+        q.reject(error);
+    }
+
+    me.template(packagePath, dataOrFile)
+        .then(function(data){
+            q.resolve(data);
+        });
+
+    return q.promise;
 };
 
 me.process = function(templateString, data) {
