@@ -152,7 +152,7 @@ describe('Template', function() {
         });
 
         it('should write a string into a new file', function() {
-            return heinzelTemplate.write('foo/existing.json', 'write me').should.be.fulfilled;
+            return heinzelTemplate.write('foo/newFile.json', 'write me').should.be.fulfilled;
         });
 
         it('should write to a existing file if override is set', function() {
