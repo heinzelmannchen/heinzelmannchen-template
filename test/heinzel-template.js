@@ -2,7 +2,6 @@ var mock = require('mockery'),
     mockFs = require('mock-fs'),
     fsUtil = require('heinzelmannchen-fs'),
     heinzelTemplate = require('../heinzel-template');
-require('mocha-as-promised')();
 
 describe('Template', function() {
     describe('#process', function() {
@@ -207,6 +206,18 @@ describe('Template', function() {
                 content = 'write me';
 
             return heinzelTemplate.write(filePathTemplate, content, options).should.become('foo/Fritzchen/newFile.json');
+        });
+    });
+    describe('#fromNpm', function() {
+        it('should fail if template not found', function() {
+            return heinzelTemplate.templateFromNpm('fail/now.tpl', {
+                heinzel: 'Anton'
+            }).should.be.rejected;
+        });
+        it('should resolve if package exists', function() {
+            return heinzelTemplate.templateFromNpm('./examples/simpleTemplate.tpl', {
+                name: 'Anton'
+            }).should.eventually.be.eql('Hello Anton!\n');
         });
     });
 });

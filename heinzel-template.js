@@ -23,25 +23,23 @@ me.template = function(template, dataOrFile) {
 };
 
 me.templateFromNpm = function(template, dataOrFile) {
+    return exists(template)
+        .then(function(packagePath) {
+            return me.template(packagePath, dataOrFile);
+        });
+};
+
+function exists(templateModule) {
     var q = Q.defer(),
         packagePath;
-
     try {
-        packagePath = require.resolve(template);
+        packagePath = require.resolve(templateModule);
+        q.resolve(packagePath);
     } catch (error) {
-        q.reject(error);
+        q.reject();
     }
-
-    me.template(packagePath, dataOrFile)
-        .then(function(data){
-            q.resolve(data);
-        })
-        .fail(function(error){
-            q.reject(error);
-        });
-
     return q.promise;
-};
+}
 
 me.process = function(templateString, data) {
     var templateData = data || {};
