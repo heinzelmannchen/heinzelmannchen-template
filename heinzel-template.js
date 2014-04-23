@@ -65,10 +65,11 @@ me.write = function(file, content, options) {
         })
         .then(function onPathExists() {
             if (options.override)  {
-                return fsUtil.removeFile(filePathAndName);
-            } else {
-                return;
+                try {
+                    fsUtil.removeFile(filePathAndName);
+                } catch (error) {}
             }
+            return;
         })
         .then(function() {
             return fsUtil.createFile(filePathAndName, content);
