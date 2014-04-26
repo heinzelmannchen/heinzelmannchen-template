@@ -179,7 +179,7 @@ describe('Template', function() {
 
         it('should create directory if force option is used', function() {
             return heinzelTemplate.write('foo/bar/newFile.json', 'write me', {
-                force: true
+                ensurePathExists: true
             }).then(function() {
                 return fsUtil.readFileOrReturnData('foo/bar/newFile.json');
             }).should.become('write me');
