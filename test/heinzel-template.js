@@ -217,7 +217,7 @@ describe('Template', function() {
         it('should resolve if package exists', function() {
             return heinzelTemplate.templateFromNpm('./examples/simpleTemplate.tpl', {
                 name: 'Anton'
-            }).should.eventually.be.eql('Hello Anton!\n');
+            }).should.eventually.be.eql('Hello Anton!');
         });
     });
 });
