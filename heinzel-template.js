@@ -63,16 +63,8 @@ me.write = function(file, content, options) {
                 return fsUtil.ensurePathExists(filePath, options.ensurePathExists);
             }
         })
-        .then(function onPathExists() {
-            if (options.override)  {
-                try {
-                    fsUtil.removeFile(filePathAndName);
-                } catch (error) {}
-            }
-            return;
-        })
         .then(function() {
-            return fsUtil.createFile(filePathAndName, content);
+            return fsUtil.createFile(filePathAndName, content, { force: options.override });
         })
         .then(function onFileCreated() {
             q.resolve(filePathAndName);
