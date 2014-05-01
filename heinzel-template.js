@@ -64,7 +64,7 @@ me.write = function(file, content, options) {
             }
         })
         .then(function() {
-            return fsUtil.createFile(filePathAndName, content, { force: options.override });
+            return fsUtil.createFile(filePathAndName, content, options);
         })
         .then(function onFileCreated() {
             q.resolve(filePathAndName);
