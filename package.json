@@ -1,6 +1,6 @@
 {
   "name": "heinzelmannchen-template",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "template engine",
   "main": "heinzel-template.js",
   "scripts": {
@@ -38,6 +38,6 @@
     "underscore.string": "~2.3.3",
     "commander": "~2.1.0",
     "winston": "~0.7.2",
-    "heinzelmannchen-fs": "git://github.com/heinzelmannchen/heinzelmannchen-fs.git#master"
+    "heinzelmannchen-fs": "~1.0.0"
   }
 }
