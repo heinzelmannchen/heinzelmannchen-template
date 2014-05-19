@@ -25,18 +25,22 @@ me.template = function(template, dataOrFile) {
 me.templateFromNpm = function(template, dataOrFile) {
     return exists(template)
         .then(function(packagePath) {
-            return me.template(packagePath, dataOrFile);
+            template = packagePath;
+            return exists(dataOrFile);
+        })
+        .then(function(dataPathOrData) {
+            return me.template(template, dataPathOrData);
         });
 };
 
-function exists(templateModule) {
+function exists(module) {
     var q = Q.defer(),
         packagePath;
     try {
-        packagePath = require.resolve(templateModule);
+        packagePath = require.resolve(module);
         q.resolve(packagePath);
     } catch (error) {
-        q.resolve(templateModule);
+        q.resolve(module);
     }
     return q.promise;
 }
