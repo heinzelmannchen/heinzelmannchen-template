@@ -36,7 +36,7 @@ function exists(templateModule) {
         packagePath = require.resolve(templateModule);
         q.resolve(packagePath);
     } catch (error) {
-        q.reject();
+        q.resolve(templateModule);
     }
     return q.promise;
 }
