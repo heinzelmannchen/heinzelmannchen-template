@@ -79,7 +79,7 @@ me.write = function(file, content, options) {
 };
 
 me.loadCustomScript = function(fileName) {
-    global._custom = require(process.cwd() + fileName);
+    global._custom = require(process.cwd() + '/' + fileName);
 };
 
 me.setDelimiter = function(startDelimiter, endDelimiter) {

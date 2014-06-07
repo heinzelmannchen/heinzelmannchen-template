@@ -57,7 +57,7 @@ describe('Template', function() {
                     return name[0];
                 }
             };
-            mock.registerMock('./custom/script', mockFunction);
+            mock.registerMock(process.cwd() + '/./custom/script', mockFunction);
         });
 
         after(function() {
